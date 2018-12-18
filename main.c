@@ -48,8 +48,7 @@ int main(void)
 
     /*  keep listening for data */
 
-    while(1)
-    {
+
         printf("Waiting for data...\n");
         fflush(stdout);
         /*  try to receive some data, this is a blocking call */
@@ -63,7 +62,7 @@ int main(void)
         buf[recv_len] = '\0'; /* fin de chaine */
 
         /* print details of the client/peer and the data received */
-/*        printf("Received packet from %s:%x\n", inet_ntoa(si_other.sin_addr), ntohs(si_other.sin_port));*/
+        /*        printf("Received packet from %s:%x\n", inet_ntoa(si_other.sin_addr), ntohs(si_other.sin_port));*/
         printf("Received packet from %s:%d\n", inet_ntoa(si_other.sin_addr), (PORT));
         printf("Data: %s\n" , buf);
 
@@ -73,9 +72,9 @@ int main(void)
             printf("err: sendto\n");
             exit(EXIT_FAILURE);
         }
-    }
-/*
+
+
     close(my_socket);
-*/
+
     return EXIT_SUCCESS;
 }
