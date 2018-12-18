@@ -1,5 +1,6 @@
 /*
-    Simple udp server
+    Simple udp server, pédagogique version
+    (2018)bogt
 */
 #include<stdio.h> //printf
 #include<string.h> //memset
@@ -19,10 +20,10 @@
  */
 int main(void)
 {
-    struct sockaddr_in si_me, si_other;
+    struct sockaddr_in si_me;
 
     int my_socket;
-    int slen = sizeof(si_other) , recv_len;
+    int slen = sizeof(si_me) , recv_len;
     char buf[BUFLEN];
 
     /* create a UDP socket */
@@ -53,7 +54,7 @@ int main(void)
         fflush(stdout);
         /*  try to receive some data, this is a blocking call */
 
-        if ((recv_len = (int)recvfrom(my_socket,buf,BUFLEN,0, (struct sockaddr *) &si_other, (socklen_t*) &slen)) == -1)
+        if ((recv_len = (ssize_t)recvfrom(my_socket,buf,BUFLEN,0, (struct sockaddr *) &si_me, (socklen_t*) &slen)) == -1)
         {
             printf("Echec au recvfrom \n");
             exit(EXIT_FAILURE);
@@ -63,11 +64,11 @@ int main(void)
 
         /* print details of the client/peer and the data received */
         /*        printf("Received packet from %s:%x\n", inet_ntoa(si_other.sin_addr), ntohs(si_other.sin_port));*/
-        printf("Received packet from %s:%d\n", inet_ntoa(si_other.sin_addr), (PORT));
+        printf("Received packet from %s:%d\n", inet_ntoa(si_me.sin_addr), (PORT));
         printf("Data: %s\n" , buf);
 
         //now reply the client with the same data
-        if (sendto(my_socket, buf, (size_t)recv_len, 0, (struct sockaddr*) &si_other, (socklen_t)slen) == -1)
+        if (sendto(my_socket, buf, (size_t)recv_len, 0, (struct sockaddr*) &si_me, (socklen_t)slen) == -1)
         {
             printf("err: sendto\n");
             exit(EXIT_FAILURE);
