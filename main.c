@@ -25,14 +25,14 @@ int main(void)
     int my_socket;
     int slen = sizeof(si_me) , recv_len;
     char buf[BUFLEN];
-
+    printf("Serveur UDP\n");
     /* create a UDP socket */
     if ((my_socket=socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP)) == -1)
     {
         printf("Echec a socket\n");
         exit(EXIT_FAILURE);
     }
-
+    printf("Ouverture socket            Ok\n");
     /* zero out the structure */
     memset((char *) &si_me, 0, sizeof(si_me));
 
@@ -46,36 +46,37 @@ int main(void)
         printf("echec au bind\n");
         exit(EXIT_FAILURE);
     }
-
+    printf("Bind                    Ok\n");
     /*  keep listening for data */
 
-        printf("Serveur UDP\n");
-        printf("Waiting for data...\n");
-        fflush(stdout);
-        /*  try to receive some data, this is a blocking call */
 
-        if ((recv_len = (int)recvfrom(my_socket,buf,BUFLEN,0, (struct sockaddr *) &si_me, (socklen_t*) &slen)) == -1)
-        {
-            printf("Echec au recvfrom \n");
-            exit(EXIT_FAILURE);
-        }
+    printf("Attendre les donnes...\n");
+    printf("attendre le message avec recvfrom \n");
+    fflush(stdout);
+    /*  try to receive some data, this is a blocking call */
+    if ((recv_len = (int)recvfrom(my_socket,buf,BUFLEN,0, (struct sockaddr *) &si_me, (socklen_t*) &slen)) == -1)
+    {
+        printf("Echec au recvfrom \n");
+        exit(EXIT_FAILURE);
+    }
+    printf("Recive from             Ok\n");
+    buf[recv_len] = '\0'; /* fin de chaine */
 
-        buf[recv_len] = '\0'; /* fin de chaine */
+    /* print details of the client/peer and the data received */
+    /*        printf("Received packet from %s:%x\n", inet_ntoa(si_other.sin_addr), ntohs(si_other.sin_port));*/
+    printf("Received packet from %s:%d\n", inet_ntoa(si_me.sin_addr), (PORT));
+    printf("Données recues venant du client: %s\n" , buf);
 
-        /* print details of the client/peer and the data received */
-        /*        printf("Received packet from %s:%x\n", inet_ntoa(si_other.sin_addr), ntohs(si_other.sin_port));*/
-        printf("Received packet from %s:%d\n", inet_ntoa(si_me.sin_addr), (PORT));
-        printf("Data: %s\n" , buf);
-
-        //now reply the client with the same data
-        printf("chaine renvoyée par le serveur =>%s\n",buf);
-        if (sendto(my_socket, buf, (size_t)recv_len, 0, (struct sockaddr*) &si_me, (socklen_t)slen) == -1)
-        {
-            printf("err: sendto\n");
-            exit(EXIT_FAILURE);
-        }
-
-
+    //now reply the client with the same data
+    printf("chaine renvoyée par le serveur =>%s dans 3 secondes ...\n",buf);
+    sleep(3);
+    printf("envoyé\n");
+    if (sendto(my_socket, buf, (size_t)recv_len, 0, (struct sockaddr*) &si_me, (socklen_t)slen) == -1)
+    {
+        printf("err: sendto\n");
+        exit(EXIT_FAILURE);
+    }
+    printf("Sendto                  Ok\n");
     close(my_socket);
 
     return EXIT_SUCCESS;
