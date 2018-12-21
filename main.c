@@ -49,12 +49,12 @@ int main(void)
 
     /*  keep listening for data */
 
-
+        printf("Serveur UDP\n");
         printf("Waiting for data...\n");
         fflush(stdout);
         /*  try to receive some data, this is a blocking call */
 
-        if ((recv_len = (ssize_t)recvfrom(my_socket,buf,BUFLEN,0, (struct sockaddr *) &si_me, (socklen_t*) &slen)) == -1)
+        if ((recv_len = (int)recvfrom(my_socket,buf,BUFLEN,0, (struct sockaddr *) &si_me, (socklen_t*) &slen)) == -1)
         {
             printf("Echec au recvfrom \n");
             exit(EXIT_FAILURE);
@@ -68,6 +68,7 @@ int main(void)
         printf("Data: %s\n" , buf);
 
         //now reply the client with the same data
+        printf("chaine renvoyée par le serveur =>%s\n",buf);
         if (sendto(my_socket, buf, (size_t)recv_len, 0, (struct sockaddr*) &si_me, (socklen_t)slen) == -1)
         {
             printf("err: sendto\n");
